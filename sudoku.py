@@ -46,7 +46,7 @@ class Sudoku():
             self._neighbors[cell] += [var for var in self._members if var[0] in row_keys and var[1] in col_keys and var != cell]
 
         #Apply Contraints
-        apply_constraints()
+        self.apply_constraints()
 
 
     # Accessor Functions
@@ -65,6 +65,11 @@ class Sudoku():
             return self._neighbors[cell]
         return self._neighbors
 
+    def export_grid(self):
+        grid = []
+        for cell in self._members:
+            grid.append([self.get_variables(cell)])
+        return grid
 
 
     # Constraint Handling
