@@ -4,6 +4,7 @@
 #
 
 import value
+from sudoku import Sudoku
 
 def f(value_grid):
 
@@ -83,42 +84,75 @@ def apply_unary_constraints(constraints, value_grid):
 
     return (constraints, value_grid)
 
-def arc_consistency(constraints, value_grid):
-    # Enforces arc consistency on the ValueGrid, by applying the binary constraints in the list of Constraint objects
+# I'm not sure we need these now that the Sudoku class contains the _neighbors dictionary
+# def arc_consistency(sudoku):
+#     # Enforces arc consistency on the ValueGrid, by applying the binary constraints in the list of Constraint objects
 
-    arcs = generate_arcs(value_grid)
+#     arcs = generate_arcs(value_grid)
 
-    for arc in arcs:
+#     for arc in arcs:
 
-        for possible in value_grid.get_guesses(arc[0]):
+#         for possible in value_grid.get_guesses(arc[0]):
 
-            for constraint in constraints:
+#             for constraint in constraints:
 
-                if constraint.get_type() != "Binary":
+#                 if constraint.get_type() != "Binary":
 
-                    pass
+#                     pass
 
-                elif not constraint.check(value_grid.guess(arc[0], possible)):
+#                 elif not constraint.check(value_grid.guess(arc[0], possible)):
 
-                    value_grid.remove_guess(arc[0], possible)
-                    break
+#                     value_grid.remove_guess(arc[0], possible)
+#                     break
 
-        if len(value_grid.get_guesses(arc[0])) == 0:
+#         if len(value_grid.get_guesses(arc[0])) == 0:
 
-            raise SudokuError("No possible values left for", arc[0], "when enforcing arc consistency")
+#             raise SudokuError("No possible values left for", arc[0], "when enforcing arc consistency")
 
-        if len(value_grid.get_guesses(arc[0])) == 1:
+#         if len(value_grid.get_guesses(arc[0])) == 1:
 
-            value_grid.set_value(arc[0], value_grid.get_guesses(arc[0])[0])
+#             value_grid.set_value(arc[0], value_grid.get_guesses(arc[0])[0])
             
-    return value_grid
+#     return value_grid
 
-def generate_arcs(constraints, value_grid):
+#def generate_arcs(sudoku):
     # TODO: create a function that generates a list of all pairs of indices of *neighbors* in the ValueGrid object
 
-    arcs = []
-
-def backtrack(constraints, value_grid):
+def backtrack(sudoku):
     # TODO: implement the backtracking algorithm?
+    # Oder with Minimum Remaining Values(MRV)
+    # Use MAC algorithm for failure checking
+    
+    # Returns a list of all possible cells with the smallest number of possible values
+    def MRV(sudoku):
+        cell_domains = sudoku.get_domains()
+        min_values = float('inf')
+        candidates = []
+        for cell in cell_domains:
+            if len(cell_domains[cell]) < min_values and len(cell_domains[cell]) > 0:
+                min_values = len(cell_domains[cell])
+                candidates = [cell]
+            elif len(cell_domains[cell]) == min_values:
+                candidates.append([cell])
+        #print("MRV canidates: ", candidates)
+        return candidates
 
-    pass
+    def recursive_backtrack(sudoku):
+        if sudoku.goal_check():
+            return True
+        var = MRV(sudoku)[0]
+        var_index = sudoku.get_variables().index(var)
+        test_grid = sudoku.export_grid()
+        for value in sudoku.get_domains(var):
+            test_grid[var_index] = value
+            test_sudoku = Sudoku(test_grid)
+            constraints_check = test_sudoku.constraints_check()
+            if constraints_check:
+                iterate_sudoku = recursive_backtrack(test_sudoku)
+                if iterate_sudoku == True:
+                    sudoku.update_variable(var, value)
+        return False
+
+    recursive_backtrack(sudoku)
+
+    return 
