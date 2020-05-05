@@ -1,23 +1,30 @@
+from deap import base, creator, tools
 
+DEBUG = False
 
 class Sudoku():
-    _members = {}
-    _domains = {}
-    _neighbors = {}
 
-    def __init__(self, input):
+    # NOTE: I moved the class variable initialization to within the __init__ method
+    # The way it was implemented, these were *global* variables, and would update across all Sudoku objects when one updated
+    # Now, these should be unique to each Sudoku object
+
+    def __init__(self, inp, grid_size = 9): # Changed "input" to "inp", to avoid any mix-ups in using a keyword
         # TODO: Make variable in size for n < 9
-        _Sudoku_Cols = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        _Sudoku_Rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-        _Possible_Vals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        _Sudoku_Cols = ['1', '2', '3', '4', '5', '6', '7', '8', '9'][:grid_size]
+        _Sudoku_Rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'][:grid_size]
+        _Possible_Vals = [1, 2, 3, 4, 5, 6, 7, 8, 9][:grid_size]
+        self._grid_size = grid_size
+        self._members = {}
+        self._domains = {}
+        self._neighbors = {}
         index = 0
 
         # Variables and Domains
         for prefix in _Sudoku_Rows:
             for suffix in _Sudoku_Cols:
                 key = prefix + suffix
-                self._members[key] =  input[index]
-                if input[index] != 0:
+                self._members[key] =  inp[index]
+                if inp[index] != 0:
                     self._domains[key] = []
                 else:
                     self._domains[key] = _Possible_Vals
@@ -31,21 +38,50 @@ class Sudoku():
             self._neighbors[cell] = [member for member in self._members if member.count(cell_row) == 1 and member != cell]
             # Col Neighbors
             self._neighbors[cell] += [member for member in self._members if member.count(cell_col) == 1 and member != cell]
-            
+
             # Box Neighbors
-            if cell_row in ['A', 'B', 'C']:
-                row_keys = ['A', 'B', 'C']
-            elif cell_row in ['D', 'E', 'F']:
-                row_keys = ['D', 'E', 'F']
-            elif cell_row in ['G', 'H', 'I']:
-                row_keys = ['G', 'H', 'I']
+
+            if grid_size == 9:
+                
+                if cell_row in ['A', 'B', 'C']:
+                    row_keys = ['A', 'B', 'C']
+                elif cell_row in ['D', 'E', 'F']:
+                    row_keys = ['D', 'E', 'F']
+                elif cell_row in ['G', 'H', 'I']:
+                    row_keys = ['G', 'H', 'I']
             
-            if cell_col in ['1', '2', '3']:
-                col_keys = ['1', '2', '3']
-            elif cell_col in ['4', '5', '6']:
-                col_keys = ['4', '5', '6']
-            elif cell_col in ['7', '8', '9']:
-                col_keys = ['7', '8', '9']
+                if cell_col in ['1', '2', '3']:
+                    col_keys = ['1', '2', '3']
+                elif cell_col in ['4', '5', '6']:
+                    col_keys = ['4', '5', '6']
+                elif cell_col in ['7', '8', '9']:
+                    col_keys = ['7', '8', '9']
+
+            if grid_size == 6:
+
+                if cell_row in ['A', 'B']:
+                    row_keys = ['A', 'B']
+                elif cell_row in ['C', 'D']:
+                    row_keys = ['C', 'D']
+                elif cell_row in ['E', 'F']:
+                    row_keys = ['E', 'F']
+            
+                if cell_col in ['1', '2', '3']:
+                    col_keys = ['1', '2', '3']
+                elif cell_col in ['4', '5', '6']:
+                    col_keys = ['4', '5', '6']
+
+            if grid_size == 4:
+
+                if cell_row in ['A', 'B']:
+                    row_keys = ['A', 'B']
+                elif cell_row in ['C', 'D']:
+                    row_keys = ['C', 'D']
+
+                if cell_col in ['1', '2']:
+                    col_keys = ['1', '2']
+                elif cell_col in ['3', '4']:
+                    col_keys = ['3', '4']
             
             self._neighbors[cell] += [var for var in self._members if var[0] in row_keys and var[1] in col_keys and var != cell and var not in self._neighbors[cell]]
 
@@ -86,7 +122,7 @@ class Sudoku():
         return
     
     def reset_domain(self, var):
-        self._domains[var] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self._domains[var] = range(1, self._grid_size+1)
         self.apply_constraints()
 
     # Constraint Handling
@@ -113,12 +149,60 @@ class Sudoku():
 
     # TODO: Global Utility function ( -1 for every constraint broken)
 
+    def constraints_count(self):
+
+        broken = 0
+
+        for cell in list(self._neighbors):
+            if DEBUG: print("Cell:", cell)
+            for neighbor in self._neighbors[cell]:
+                if self._members[cell] == 0:
+                    break
+                elif self._members[cell] == self._members[neighbor]:
+                    if DEBUG: print("Neighbor:", neighbor)
+                    broken += 1
+
+        return broken
+
     def goal_check(self):
         for cell in self._members:
             if self._members[cell] == 0:
                 return False
-        return True
-        
+        return (self.constraints_count() == 0)
+
+def print_sudoku(sudo, grid_size = None):
+
+    grid = sudo.export_grid()
+    if grid_size == None: grid_size = int(len(grid) ** 0.5)
+
+    for i in range(grid_size):
+
+        row = grid[i*grid_size:i*grid_size+grid_size]
+        output = ""
+
+        for j in range(grid_size):
+
+            cell = row[j]
+
+            if cell == 0:
+
+                output += " "
+
+            else:
+
+                output += str(cell)
+
+            if j < grid_size-1:
+
+                output += " | "
+
+        print(output)
+
+        if i < grid_size-1:
+
+            print("".join(["-" for foo in range((grid_size * 4) - 1)]))
+
+    return
 
     # TODO: Mutate function for GA
 
