@@ -1,0 +1,6 @@
+README.md
+setup.py
+sudokuslayer.egg-info/PKG-INFO
+sudokuslayer.egg-info/SOURCES.txt
+sudokuslayer.egg-info/dependency_links.txt
+sudokuslayer.egg-info/top_level.txt

@@ -119,7 +119,6 @@ def apply_unary_constraints(constraints, value_grid):
     # TODO: create a function that generates a list of all pairs of indices of *neighbors* in the ValueGrid object
 
 def backtrack(sudoku):
-    # TODO: implement the backtracking algorithm?
     # Oder with Minimum Remaining Values(MRV)
     # Use MAC algorithm for failure checking
     
