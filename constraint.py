@@ -132,26 +132,22 @@ def backtrack(sudoku):
                 min_values = len(cell_domains[cell])
                 candidates = [cell]
             elif len(cell_domains[cell]) == min_values:
-                candidates.append([cell])
-        #print("MRV canidates: ", candidates)
+                candidates.append(cell)
         return candidates
 
-    def recursive_backtrack(sudoku):
-        if sudoku.goal_check():
+    def recursive_backtrack(sudoku, test_sudoku):
+        if test_sudoku.goal_check():
             return True
-        var = MRV(sudoku)[0]
-        var_index = sudoku.get_variables().index(var)
-        test_grid = sudoku.export_grid()
-        for value in sudoku.get_domains(var):
-            test_grid[var_index] = value
-            test_sudoku = Sudoku(test_grid)
-            constraints_check = test_sudoku.constraints_check()
-            if constraints_check:
-                iterate_sudoku = recursive_backtrack(test_sudoku)
-                if iterate_sudoku == True:
-                    sudoku.update_variable(var, value)
+        var = MRV(test_sudoku)[0]
+        test_domain = test_sudoku.get_domains(var)
+        for value in test_domain:
+            test_sudoku.update_variable(var, value)
+            valid = recursive_backtrack(sudoku, test_sudoku)
+            if valid == True:
+                sudoku.update_variable(var, value)
+                return True
         return False
 
-    recursive_backtrack(sudoku)
-
+    sudoku_copy = Sudoku(sudoku.export_grid())
+    recursive_backtrack(sudoku, sudoku_copy)
     return 

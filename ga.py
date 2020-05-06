@@ -50,8 +50,8 @@ def register_evo_functions(
     selectfunc = tools.selRoulette # This method will be used to select the best guesses in a population
     ):
 
-    toolbox.register("mate", lambda sudo1, sudo2 : [toolbox.sudoku(grid) for grid in matefunc(sudo1.export_grid(), sudo2.export_grid())])
-    toolbox.register("mutate", lambda sudo1 : toolbox.sudoku(mutatefunc(sudo1.export_grid())))
+    toolbox.register("mate", lambda sudo1, sudo2 : [toolbox.sudoku(grid) for grid in matefunc(sudo1.export_grid(), sudo2.export_grid())]) # INPUT : LIST OF INTS, OUTPUT: LIST OF INTS
+    toolbox.register("mutate", lambda sudo1 : toolbox.sudoku(mutatefunc(sudo1.export_grid())))  # INPUT : LIST OF INTS, OUTPUT: LIST OF INTS
     toolbox.register("select", selectfunc)
     toolbox.register("evaluate", evalfunc)
 
@@ -92,7 +92,7 @@ def default_breed_method(parent_set, matefunc): # Takes a set of parents [P1, ..
     return default_breed_method(new_parent_set, matefunc)
 
 def iterate_one_generation(
-    population, # The population of puzzle solutions to be iterated upon
+    population, # The population of puzzle solutions to be iterated upon DEFAULT POP SIZE = 10
     toolbox, # A toolbox that MUST contain functions "mate", "mutate", "select", and "evaluate"
     k, # The number of parents to be selected for crossover
     match_method = default_match_method, # The method of selecting which parents breed with which, from a pool of selected candidates

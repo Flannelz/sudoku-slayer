@@ -42,7 +42,6 @@ class Sudoku():
             # Box Neighbors
 
             if grid_size == 9:
-                
                 if cell_row in ['A', 'B', 'C']:
                     row_keys = ['A', 'B', 'C']
                 elif cell_row in ['D', 'E', 'F']:
@@ -119,6 +118,7 @@ class Sudoku():
     def update_variable(self, var, val):
         self._members[var] = val
         self._domains[var] = []
+        self.apply_constraints()
         return
     
     def reset_domain(self, var):
@@ -139,15 +139,13 @@ class Sudoku():
 
     def constraints_check(self):
         for cell in list(self._neighbors):
+            if self._members[cell] == 0:
+                break
             for neighbor in self._neighbors[cell]:
-                if self._members[cell] == 0:
-                    break
-                elif self._members[cell] == self._members[neighbor]:
-                    print("member: ", cell, " @ ", self._members[cell], " neighbor: ", neighbor, " @ ", self._members[neighbor])
+                if self._members[cell] == self._members[neighbor]:
+                    #print("member: ", cell, " @ ", self._members[cell], " neighbor: ", neighbor, " @ ", self._members[neighbor])
                     return False
         return True
-
-    # TODO: Global Utility function ( -1 for every constraint broken)
 
     def constraints_count(self):
 
