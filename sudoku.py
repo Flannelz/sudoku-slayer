@@ -162,16 +162,53 @@ class Sudoku():
 
         return broken
 
+    def empty_count(self):
+
+        empty = 0
+
+        for cell in self.export_grid():
+
+            if cell == 0:
+
+                empty += 1
+
+        return empty
+
     def goal_check(self):
         for cell in self._members:
             if self._members[cell] == 0:
                 return False
         return (self.constraints_count() == 0)
 
+    def matches_original(self, original):
+
+        if original == None:
+
+            return True
+
+        self_grid = self.export_grid()
+        original_grid = original.export_grid()
+
+        if len(self_grid) != len(original_grid):
+
+            return False
+
+        for i in range(len(self_grid)):
+
+            if original_grid[i] != 0 and self_grid[i] != original_grid[i]:
+
+                return False
+
+        return True
+
 def print_sudoku(sudo, grid_size = None):
 
     grid = sudo.export_grid()
     if grid_size == None: grid_size = int(len(grid) ** 0.5)
+
+    print_grid(grid, grid_size)
+
+def print_grid(grid, grid_size):
 
     for i in range(grid_size):
 
@@ -201,8 +238,6 @@ def print_sudoku(sudo, grid_size = None):
             print("".join(["-" for foo in range((grid_size * 4) - 1)]))
 
     return
-
-    # TODO: Mutate function for GA
 
 
 # TODO: Get Metrics for each run for matplot lib
