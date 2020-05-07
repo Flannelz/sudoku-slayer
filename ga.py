@@ -5,7 +5,7 @@
 import array, random, sudoku, math, itertools
 from deap import base, creator, tools
 
-DEBUG = True
+DEBUG = False
 
 def random_grid(grid_size = 9):
 
@@ -35,6 +35,23 @@ def swap_cells_once(sudoku): # Takes a sudoku puzzle as a list of values, swaps 
     temp = sudoku[i]
     sudoku[i] = sudoku[j]
     sudoku[j] = temp
+
+    return sudoku
+
+def swap_cells_noisily(sudoku):
+    
+    epsilon = 0.6
+
+    i = random.randint(0, len(sudoku)-1)
+    j = random.randint(0, len(sudoku)-1)
+
+    temp = sudoku[i]
+    sudoku[i] = sudoku[j]
+    sudoku[j] = temp
+
+    if random.choices([True, False], weights=[epsilon, 100 - epsilon]):
+        for count in range(0, 9):
+            sudoku[random.randint(0, len(sudoku)-1)] = random.randint(1, 9)
 
     return sudoku
 
@@ -319,6 +336,71 @@ def test_case_3():
         print(sudo.export_grid())
 
     (newPop, x_data, y_data) = run_ga_get_data(toolbox, pop, k = 2, generations = 1000, mode = "WVALUES_AVG")
+
+    for sudo in newPop:
+
+        sudo.fitness.values = toolbox.evaluate(sudo)
+        print(sudo.export_grid())
+        print(sudo.fitness.wvalues)
+
+    print(x_data)
+    print(y_data)
+
+def test_case_4():
+
+    toolbox = initialize_toolbox(4)
+    toolbox = register_evo_functions(toolbox, mutatefunc=swap_cells_noisily)
+    grids = [random_grid(4) for foo in range(10)]
+    pop = [toolbox.sudoku(grid) for grid in grids]
+
+    for sudo in pop:
+
+        sudo.fitness.values = toolbox.evaluate(sudo)
+        print(sudo.export_grid())
+
+    newPop = run_ga(toolbox, pop, k = 2, generations = 1000)
+
+    for sudo in newPop:
+
+        sudo.fitness.values = toolbox.evaluate(sudo)
+        print(sudo.export_grid())
+        print(sudo.fitness.wvalues)
+
+def test_case_5():
+
+    toolbox = initialize_toolbox(4)
+    toolbox = register_evo_functions(toolbox, mutatefunc=swap_cells_noisily)
+    grid = [0,3,0,2,0,0,0,0,0,0,0,0,1,0,2,0]
+    grids = [grid for foo in range(10)]
+    pop = [toolbox.sudoku(grid) for grid in grids]
+    original = toolbox.sudoku(grid, grid_size = 4)
+
+    for sudo in pop:
+
+        sudo.fitness.values = toolbox.evaluate(sudo)
+        print(sudo.export_grid())
+
+    newPop = run_ga(toolbox, pop, puzzle = original, k = 2, generations = 100000)
+
+    for sudo in newPop:
+
+        sudo.fitness.values = toolbox.evaluate(sudo)
+        print(sudo.export_grid())
+        print(sudo.fitness.wvalues)
+
+def test_case_6():
+
+    toolbox = initialize_toolbox(4)
+    toolbox = register_evo_functions(toolbox, mutatefunc=swap_cells_noisily)
+    grids = [random_grid(4) for foo in range(10)]
+    pop = [toolbox.sudoku(grid) for grid in grids]
+
+    for sudo in pop:
+
+        sudo.fitness.values = toolbox.evaluate(sudo)
+        print(sudo.export_grid())
+
+    (newPop, x_data, y_data) = run_ga_get_data(toolbox, pop, k = 2, generations = 10000, mode = "WVALUES_AVG")
 
     for sudo in newPop:
 
