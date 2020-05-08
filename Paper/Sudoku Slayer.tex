@@ -130,6 +130,9 @@ We also tested how quickly our GA solver could generate a valid complete Sudoku 
 These random examples were generated using the default random python library, assigning a random number($<n^2$) of random values($0<value<(n+1)$).
 
 \section{Results}
+We were able to solve traditional $9*9$ Sudoku puzzles with the CSP solver.
+Our GA solver was able to generate a valid $4*4$ Sudoku puzzle from an initial, randomly generated population but was unable to do so for a $9*9$ solution.
+
 All figures were generated using the matplotlib python library. Each data point represents the average weighted score of 5 runs at the corresponding x value.
 The x axis always represents the independent variable we are testing, and the y-axis will always be the highest weighted-value of the final generation.
 
@@ -145,14 +148,14 @@ It is clear that attempts to normalize values via averaging failed to produce co
 
 \begin{figure}[H]
 \centerline{\includegraphics[scale=0.5]{Figures/Mutation_Chance_Averages.png}}
-\caption{The increased rate of the addition of noise in the mutation function on the weighted score of the final generation}
+\caption{The increased rate of the addition of noise in the mutation function on the weighted score of the final generation. X axis values are the percent chance of noise being introduced.}
 \label{fig. 2}
 \end{figure}
 
 \par
-No correlation was found between the rate at which random values were added to a generations children.
+No correlation was found between the rate at which random values were added to a generation's children.
 This could be because the increments between iterations was too large.
-Another possibility could be that the chance of a "noisy" mutation needed to be less than one.
+Another possibility could be that the chance of a "noisy" mutation needed to be less than one percent.
 
 
 \begin{figure}[H]
@@ -162,11 +165,20 @@ Another possibility could be that the chance of a "noisy" mutation needed to be 
 \end{figure}
 
 \par
-The results for 
+The results for the number of cells changed when introducing noise suggest a negative correlation between the amount of noise introduced and the ability for the GA to control the fitness of subsequent generations.
 
 \section{Discussion}
+It is clear from our results that modeling Sudoku puzzles as a CSP provides the most robust solution for solving a Sudoku puzzle.
+While GAs allow for a broader approach to problem solving, its strengths lie in its ability to derive alternate variable weightings.
 
+\par
+Our choice to vary the parameters of our GA provides insight into possible iterations on our parameters.
+We believe that our results could be improved by lowering both the rate and the number of cells used when introducing noise during mutation.
 
+\par
+These results reinforce our hypothesis that CSPs are the best method for modeling Sudoku Puzzles when presented with lower $n$ values.
+Higher $n$ values will cause any CSP implementation to increase in complexity, and it is still possible that GAs are able to better handle Sudoku puzzles with larger $n$ values.
+Unfortunately we were unable to produce a GA that performed reliably enough to test this.
 
 \section{Conclusion}
 
@@ -181,7 +193,6 @@ In particular, incorporating multi-parent crossover methods, implementing dynami
 \bibitem{b3}Hassanat, Ahmad, “Choosing Mutations and Crossover Ratios for Genetic Algorithms-A Review with a New Dynamic Approach”,  Khalid Almohammadi, Esra’a Alkaween, Eman Abunawas, Awni Hammouri, V.B. Sura Prasath, https://www.mdpi.com/2078-2489/10/12/390/pdf 
 \bibitem{b4}Nisha Saini, "review of Selection Methods in Genetic Algorithms", https://www.ijecs.in/index.php/ijecs/article/download/2562/2368/
 \bibitem{b5}A. E. Eiben, “Multi-Parent Recombination”, https://www.cs.vu.nl/~gusz/papers/Handbook-Multiparent-Eiben.pdf
-\bibitem{b5}
 \bibitem{b6}
 
 \end{thebibliography}
