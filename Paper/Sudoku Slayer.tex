@@ -103,7 +103,7 @@ The solutions to the puzzles were converted the same way, and correctness was ch
 By using the same standard for both input and output data representations, not only was it simple to edit values of known cell's indices, but initialize Sudoku objects with the new value.
 
 \subsection{Genetic Algorithm Methodology}
-We used the Deap python library as the framework for organizing our GA [6].
+We used the Deap python library as the framework for organizing our GA [7].
 Deap allows for the use of custom data types and functions for interfacing with the GA framework.
 These custom functions effectively created our own API for the Sudoku class we had created for the CSP implementation.
 This API allowed us to test various parameters for our genetic algorithm and attempt to optimize our functions for solving Sudoku puzzles.
@@ -169,7 +169,7 @@ The results for the number of cells changed when introducing noise suggest a neg
 
 \section{Discussion}
 It is clear from our results that modeling Sudoku puzzles as a CSP provides the most robust solution for solving a Sudoku puzzle.
-While GAs allow for a broader approach to problem solving, its strengths lie in its ability to derive alternate variable weightings.
+While GAs allow for a broader approach to problem solving, its strengths lie in its ability to construct alternate variable weights.
 
 \par
 Our choice to vary the parameters of our GA provides insight into possible iterations on our parameters.
@@ -193,7 +193,8 @@ In particular, incorporating multi-parent crossover methods, implementing dynami
 \bibitem{b3}Hassanat, Ahmad, “Choosing Mutations and Crossover Ratios for Genetic Algorithms-A Review with a New Dynamic Approach”,  Khalid Almohammadi, Esra’a Alkaween, Eman Abunawas, Awni Hammouri, V.B. Sura Prasath, https://www.mdpi.com/2078-2489/10/12/390/pdf 
 \bibitem{b4}Nisha Saini, "review of Selection Methods in Genetic Algorithms", https://www.ijecs.in/index.php/ijecs/article/download/2562/2368/
 \bibitem{b5}A. E. Eiben, “Multi-Parent Recombination”, https://www.cs.vu.nl/~gusz/papers/Handbook-Multiparent-Eiben.pdf
-\bibitem{b6}
+\bibitem{b6}Park, Kyubyong, "1 million Sudoku games", https://www.kaggle.com/bryanpark/sudoku
+\bibitem{b7} F\'elix-Antoine Fortin and Fran\c{c}ois-Michel {De Rainville} and Marc-Andr\'e Gardner and Marc Parizeau and Christian Gagn\'e, "DEAP: Evolutionary Algorithms Made Easy", Journal of Machine Learning Research, 13, 2012, 2171-2175
 
 \end{thebibliography}
 
